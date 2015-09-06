@@ -7,7 +7,7 @@ app = Flask(__name__)
 @app.route("/parse", methods=['GET', 'POST'])
 def parse():
     if request.method == 'POST':
-        input = request.form['input']
+        input = request.form['input'].strip()
         tagged_words = tagger.tag(input.split(' '))
         commodities = classify(tagged_words)
         result = json.dumps([commodity.serialize() for commodity in commodities])
