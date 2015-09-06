@@ -16,6 +16,12 @@ unimodel = {}
 for tag in ('NN', 'CD', 'DT', 'IN', 'RP'):
     for word in openwords(tag):
         unimodel[word] = tag
+        
+class NamaKomoditiTagger:
+    @staticmethod
+    def choose_tag(tokens, index, history):
+        print tokens, index, history
+NamaKomoditiTagger._taggers = [NamaKomoditiTagger]
     
 tagger = nltk.RegexpTagger([(r'^[0-9]+$', 'CD')],
 backoff = nltk.tag.UnigramTagger(model=unimodel))

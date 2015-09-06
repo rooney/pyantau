@@ -4,13 +4,18 @@ from tagger import tagger
 from flask import Flask, request, render_template, json
 app = Flask(__name__)
 
-@app.route("/parse", methods=['GET', 'POST'])
+@app.route("/parse", methods=['POST'])
 def parse():
+    input = request.form['input'].strip()
+    tagged_words = tagger.tag(input.split(' '))
+    commodities = classify(tagged_words)
+    return json.dumps([commodity.serialize() for commodity in commodities])
+
+@app.route("/parse-test", methods=['GET', 'POST'])
+def parse_test():
     if request.method == 'POST':
         input = request.form['input'].strip()
-        tagged_words = tagger.tag(input.split(' '))
-        commodities = classify(tagged_words)
-        result = json.dumps([commodity.serialize() for commodity in commodities])
+        result = parse()
     else:
         input = result = ''
     return render_template('./parse_test.html', input=input, result=result)
