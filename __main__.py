@@ -26,4 +26,4 @@ if __name__ == "__main__":
     except IndexError:
         debug = False
     app.config["JSON_SORT_KEYS"] = False
-    app.run(debug=debug)
+    app.run(host='0.0.0.0', debug=debug)
