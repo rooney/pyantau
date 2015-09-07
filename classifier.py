@@ -43,9 +43,10 @@ def classify(tagged_words):
             if tmp.amount:
                 while (
                     tmp.price
-                    and tmp.amount[0] not in ('per', 'satu', 'dua', 'tiga', 'empat', 'lima', 'enam', 'tujuh', 'delapan') 
-                    and not tmp.amount[0].startswith('se') 
                     and not re.match(r'^[\d.]+$', tmp.amount[0])
+                    and not tmp.amount[0].startswith('se') # sembilan sepuluh sebelas seratus seribu sejuta sebuah sekarung dst
+                    and tmp.amount[0] not in ('per', 'untuk', 'setiap', 'satunya',
+                        'satu', 'dua', 'tiga', 'empat', 'lima', 'enam', 'tujuh', 'delapan') 
                 ):
                     tmp.amount = [tmp.price.pop()] + tmp.amount
             print 'am-pr becomes', tmp.amount, tmp.price
