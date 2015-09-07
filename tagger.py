@@ -23,7 +23,7 @@ class NamaKomoditiTagger:
         print tokens, index, history
 NamaKomoditiTagger._taggers = [NamaKomoditiTagger]
     
-tagger = nltk.RegexpTagger([(r'^[0-9]+$', 'CD')],
+tagger = nltk.RegexpTagger([(r'^[0-9.]+$', 'CD')],
 backoff = nltk.tag.UnigramTagger(model=unimodel))
 
 if __name__ == "__main__":
