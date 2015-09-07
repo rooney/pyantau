@@ -1,21 +1,30 @@
 import sys
 from classifier import classify
 from tagger import tagger
+from crossdomain import crossdomain
 from flask import Flask, request, render_template, json
 app = Flask(__name__)
 
-@app.route("/nlparse.json", methods=['POST'])
-def parse():
-    input = request.form['input'].strip().lower()
-    tagged_words = tagger.tag(input.split(' '))
+
+def parse(input):
+    tagged_words = tagger.tag(input.strip().lower().split(' '))
     commodities = classify(tagged_words)
-    return json.dumps([commodity.serialize() for commodity in commodities])
+    return [commodity.serialize() for commodity in commodities]
+
+
+@app.route("/nlparse.json", methods=['POST'])
+@crossdomain(origin='*')
+def parse_json():
+    input = request.form['input']
+    return json.dumps(parse(input))
+
 
 @app.route("/nlparse.test", methods=['GET', 'POST'])
+@crossdomain(origin='*')
 def parse_test():
     if request.method == 'POST':
-        input = request.form['input'].strip()
-        result = parse()
+        input = request.form['input']
+        result = json.dumps(parse(input))
     else:
         input = result = ''
     return render_template('./parse_test.html', input=input, result=result)
