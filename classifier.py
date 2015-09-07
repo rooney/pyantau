@@ -32,32 +32,34 @@ def classify(tagged_words):
             allprice_noamount = len(tmp.price) > 1 and not tmp.amount
             if allprice_noamount:
                 tmp.amount.append(tmp.price.pop())
-            elif len(tmp.price) == 1 and not tmp.amount and re.match(r'^\d{3,}$', tmp.price[0]):
+            elif len(tmp.price) == 1 and not tmp.amount and re.match(r'^[\d.]{3,}$', tmp.price[0]):
                 number = tmp.price[0]
                 amount = int(number[-2:])
                 if amount > 0:
                     tmp.amount = [str(amount)]
                     tmp.price = [str(int(number) - amount)]
             
+            print 'am-pr', tmp.amount, tmp.price
             if tmp.amount:
                 while (
                     tmp.price
                     and tmp.amount[0] not in ('per', 'satu', 'dua', 'tiga', 'empat', 'lima', 'enam', 'tujuh', 'delapan') 
                     and not tmp.amount[0].startswith('se') 
-                    and not re.match(r'^\d+$', tmp.amount[0])
+                    and not re.match(r'^[\d.]+$', tmp.amount[0])
                 ):
                     tmp.amount = [tmp.price.pop()] + tmp.amount
+            print 'am-pr becomes', tmp.amount, tmp.price
 
-            if not tmp.price and len(tmp.amount) == 2 and re.match(r'^\d{3,}$', tmp.amount[0]):
+            if not tmp.price and len(tmp.amount) == 2 and re.match(r'^[\d.]{3,}$', tmp.amount[0]):
                 number = tmp.amount[0]
                 amount = int(number[-2:])
-                print 'amount', amount
                 if amount > 0:
                     tmp.amount = [str(amount), tmp.amount[1]]
                     tmp.price = [str(int(number) - amount)]
 
-            if allprice_noamount and len(tmp.amount) > len(tmp.price):
-                tmp.amount, tmp.price = tmp.price, tmp.amount
+            if allprice_noamount:
+                if len(tmp.amount) > len(tmp.price) or len(tmp.amount[0]) > len(tmp.price[0]):
+                    tmp.amount, tmp.price = tmp.price, tmp.amount
                 
             commodities.append(Commodity(
                 ' '.join(tmp.name), 
