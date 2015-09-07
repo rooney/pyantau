@@ -12,8 +12,8 @@ def parse(input):
     return [commodity.serialize() for commodity in commodities]
 
 
-@app.route("/nlparse.json", methods=['POST'])
-@crossdomain(origin='*')
+@app.route("/nlparse.json", methods=['POST', 'OPTIONS'])
+@crossdomain(origin='*', headers='Content-Type')
 def parse_json():
     input = request.json['input']
     return json.dumps(parse(input))
