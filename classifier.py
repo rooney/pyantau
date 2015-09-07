@@ -18,7 +18,6 @@ class Commodity(object):
 is_empty = lambda x: False if x else True
 
 def classify(tagged_words):
-    print tagged_words
     tagged_words = [(word, tag) for word, tag in tagged_words if tag]
     commodities = []
     
@@ -27,7 +26,7 @@ def classify(tagged_words):
         CD_target = 'amount'
 
         @staticmethod
-        def commit():
+        def commit(trigger):
             print 'committing', tmp.name, tmp.amount, tmp.price
             allprice_noamount = len(tmp.price) > 1 and not tmp.amount
             if allprice_noamount:
@@ -39,7 +38,6 @@ def classify(tagged_words):
                     tmp.amount = [str(amount)]
                     tmp.price = [str(int(number) - amount)]
             
-            print 'am-pr', tmp.amount, tmp.price
             if tmp.amount:
                 while (
                     tmp.price
@@ -49,7 +47,6 @@ def classify(tagged_words):
                         'satu', 'dua', 'tiga', 'empat', 'lima', 'enam', 'tujuh', 'delapan') 
                 ):
                     tmp.amount = [tmp.price.pop()] + tmp.amount
-            print 'am-pr becomes', tmp.amount, tmp.price
 
             if not tmp.price and len(tmp.amount) == 2 and re.match(r'^[\d.]{3,}$', tmp.amount[0]):
                 number = tmp.amount[0]
@@ -61,7 +58,10 @@ def classify(tagged_words):
             if allprice_noamount:
                 if len(tmp.amount) > len(tmp.price) or len(tmp.amount[0]) > len(tmp.price[0]):
                     tmp.amount, tmp.price = tmp.price, tmp.amount
-                
+            
+            if not tmp.price and len(tmp.amount) == 2 and trigger == 'DT':
+                return # abort
+            
             commodities.append(Commodity(
                 ' '.join(tmp.name), 
                 ' '.join(tmp.price), 
@@ -93,7 +93,7 @@ def classify(tagged_words):
             tmp.price = tmp.amount
             tmp.amount = []
         
-        if tag == 'DT' and word.startswith('se') and not tmp.price:
+        if tag == 'DT' and (word.startswith('se') or word == 'satunya') and not tmp.price:
             tmp.price = tmp.amount
             tmp.amount = []
         
@@ -106,10 +106,10 @@ def classify(tagged_words):
         print word, tag, ' '.join(last_target)
 
         if tag == 'DT' and tmp.name and tmp.price:
-            tmp.commit()
+            tmp.commit(tag)
                             
     if tmp.name or tmp.price or tmp.amount:
-        tmp.commit()
+        tmp.commit('FINAL')
         
     return commodities
 
