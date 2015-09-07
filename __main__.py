@@ -15,12 +15,11 @@ def parse(input):
 @app.route("/nlparse.json", methods=['POST'])
 @crossdomain(origin='*')
 def parse_json():
-    input = request.form['input']
+    input = request.json['input']
     return json.dumps(parse(input))
 
 
 @app.route("/nlparse.test", methods=['GET', 'POST'])
-@crossdomain(origin='*')
 def parse_test():
     if request.method == 'POST':
         input = request.form['input']
