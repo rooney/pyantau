@@ -1,7 +1,8 @@
 import sys
 from classifier import classify
 from tagger import tagger
-from flask import Flask, request, render_template, json, Response
+from crossdomain import crossdomain
+from flask import Flask, request, render_template, json
 app = Flask(__name__)
 
 
@@ -12,15 +13,14 @@ def parse(input):
 
 
 @app.route("/nlparse.json", methods=['POST'])
+@crossdomain(origin='*')
 def parse_json():
     input = request.form['input']
-    resp = Response(json.dumps(parse(input)))
-    resp.headers['Content-Type'] = 'application/json'
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    return resp
+    return json.dumps(parse(input))
 
 
 @app.route("/nlparse.test", methods=['GET', 'POST'])
+@crossdomain(origin='*')
 def parse_test():
     if request.method == 'POST':
         input = request.form['input']
