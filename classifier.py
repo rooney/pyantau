@@ -99,7 +99,7 @@ def classify(tagged_words):
         
         target = get_target()
         if target and target != last_target and last_target is not None:
-            tmp.commit()
+            tmp.commit(tag)
 
         last_target = get_target()
         last_target.append(word)
